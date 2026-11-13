@@ -7,7 +7,7 @@ public class EffectDispatcher : MonoBehaviour
 
     public static EffectDispatcher instance => effectDispatcher;
 
-    public Array[] effectHistory = new Array[10];
+    public Array[] effectHistory = new Array[1];
     private int arrayIndex = 0;
 
 
@@ -25,15 +25,17 @@ public class EffectDispatcher : MonoBehaviour
 
     public void SetEffect(EffectSo.EffectsStruct effectStruct,GameObject effectOwner,GameObject playerTouch)
     {
-        SetEffectHistory(effectStruct, effectOwner, playerTouch);
+        Debug.Log("de");
+        Debug.Log(effectStruct.EffectName);
+        //SetEffectHistory(effectStruct.EffectName, effectOwner, playerTouch);
         SetEffectToPlayer(effectStruct, playerTouch.GetComponent<EffectHandler>());
     }
-    private void SetEffectHistory(EffectSo.EffectsStruct effectStruct, GameObject effectOwner, GameObject playerTouch)
+    private void SetEffectHistory(string effectName, GameObject effectOwner, GameObject playerTouch)
     {
-        string stringHistory = effectOwner.name + "has inflicted" + effectStruct.EffectName + "to" + playerTouch.name;
+        string stringHistory = effectOwner.name + "has inflicted" + effectName + "to" + playerTouch.name;
         effectHistory.SetValue(stringHistory, arrayIndex);
         arrayIndex += 1;
-        if (arrayIndex >= effectHistory.LongLength) arrayIndex = 0;
+        if (arrayIndex >= effectHistory.Length) arrayIndex = 0;
     }
     private void SetEffectToPlayer(EffectSo.EffectsStruct effectStruct,EffectHandler playerTouchByEffect)
     {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ScriptableObjectSpawnManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class ScriptableObjectSpawnManager : MonoBehaviour
         
     }
 
+    [ContextMenu("ef")]
     void SpawnEntities()
     {           
         GameObject currentEntity = Instantiate(entityToSpawn, new Vector3(0,0,0), Quaternion.identity);         

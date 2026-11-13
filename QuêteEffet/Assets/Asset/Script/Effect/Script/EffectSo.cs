@@ -41,19 +41,6 @@ public class EffectSo : ScriptableObject
         SetData();
     }
 
-    [ContextMenu("testEffect")]
-    private void Test()
-    {
-        Debug.Log(this.GetComponentInParent<GameObject>().name);
-        EffectDispatcher.instance.SetEffect(effectsStruct, this.GetComponentInParent<GameObject>(), this.GetComponentInParent<GameObject>());
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log(this.GetComponentInParent<GameObject>().name);
-        EffectDispatcher.instance.SetEffect(effectsStruct,this.GetComponentInParent<GameObject>(),collision.gameObject);
-    }
-
     private void SetData()
     {
         effectsStruct.EffectName = EffectName;
@@ -64,5 +51,10 @@ public class EffectSo : ScriptableObject
         effectsStruct.slowModifierDuration = slowModifierDuration;
         effectsStruct.jumpModifier = jumpModifier;
         effectsStruct.jumpModifierDuration = jumpModifierDuration;
+    }
+
+    public EffectsStruct GetEffectData()
+    {
+        return effectsStruct;
     }
 }

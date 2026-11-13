@@ -21,8 +21,8 @@ public class EffectHandler : MonoBehaviour
         public float startTime;
     }
 
-    public float targetTimeSecond = 1;
-    public float targetTimeMillisecond = 1;
+    private float targetTimeSecond = 1;
+    private float targetTimeMillisecond = 1;
     private int seconde = 0;
     private float milliseconds = 0;
 
@@ -35,14 +35,14 @@ public class EffectHandler : MonoBehaviour
             targetTimeMillisecond = 1;
             milliseconds += 1;
             ReadAndApplyEffect();
-            Debug.Log(milliseconds);
+            if (milliseconds >=10)
+                milliseconds = 0;
         }
         if (targetTimeSecond <= 0)
         {
             targetTimeSecond = 1;
             seconde += 1;
             ReduceEffectDuration();
-            Debug.Log( seconde + "seconde");
         }
     }
 
@@ -52,6 +52,7 @@ public class EffectHandler : MonoBehaviour
         ownerStat.SetSpeedModifier(effectData.slowModifier);
         ownerStat.SetJumpModifier(effectData.jumpModifier);
         effectList.Add(effectData);
+        Debug.Log(effectData.startTime);
     }
     [ContextMenu("Look into List")]
     private void LookInList()
@@ -64,10 +65,12 @@ public class EffectHandler : MonoBehaviour
     private void DeleteFromList(int index)
     {
         effectList.RemoveAt(index);
+        Debug.Log("removeFromList");
     }
 
     private void ApplyEffects(savedStruct effectData)
     {
+        Debug.Log("ApplyEffect");
         ownerStat.TakeDamage(effectData.damage);
     }
 
@@ -115,8 +118,9 @@ public class EffectHandler : MonoBehaviour
             if (effectList[i].startTime == milliseconds)
             {
                 savedStruct copyStruct = effectList[i];
-                if (effectList[i].delayBeforeEffectReactivation == 0 && effectList[i].damageDuration > 0)
+                if (effectList[i].delayBeforeEffectReactivation <= 0 && effectList[i].damageDuration > 0)
                 {
+                    Debug.Log("enter");
                     ApplyEffects(effectList[i]);
                     copyStruct.delayBeforeEffectReactivation = copyStruct.delayBeforeEffectReactivationSave;
                     effectList[i] = copyStruct;

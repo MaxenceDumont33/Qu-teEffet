@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectSo
   EffectName: Poison
   damage: 2
-  damageDuration: 4
+  damageDuration: 6
   delayBeforeEffectReactivation: 2
   slowModifier: 0
   slowModifierDuration: 2

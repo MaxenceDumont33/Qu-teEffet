@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EffectDispatcher : MonoBehaviour
@@ -7,8 +8,8 @@ public class EffectDispatcher : MonoBehaviour
 
     public static EffectDispatcher instance => effectDispatcher;
 
-    public Array[] effectHistory = new Array[1];
-    private int arrayIndex = 0;
+    private List<string> effectHistory;
+    public int HistoryMaxLength = 0;
 
 
     void Awake()
@@ -23,19 +24,20 @@ public class EffectDispatcher : MonoBehaviour
         }
     }
 
+    public void Start()
+    {
+        effectHistory = new();
+    }
+
     public void SetEffect(EffectSo.EffectsStruct effectStruct,GameObject effectOwner,GameObject playerTouch)
     {
-        Debug.Log("de");
-        Debug.Log(effectStruct.EffectName);
-        //SetEffectHistory(effectStruct.EffectName, effectOwner, playerTouch);
+        SetEffectHistory(effectStruct.EffectName, effectOwner, playerTouch);
         SetEffectToPlayer(effectStruct, playerTouch.GetComponent<EffectHandler>());
     }
     private void SetEffectHistory(string effectName, GameObject effectOwner, GameObject playerTouch)
     {
-        string stringHistory = effectOwner.name + "has inflicted" + effectName + "to" + playerTouch.name;
-        effectHistory.SetValue(stringHistory, arrayIndex);
-        arrayIndex += 1;
-        if (arrayIndex >= effectHistory.Length) arrayIndex = 0;
+        effectHistory.Add(effectOwner.name + "has inflicted" + effectName + "to" + playerTouch.name);
+        if (effectHistory.Count >= HistoryMaxLength) effectHistory.RemoveAt(0);
     }
     private void SetEffectToPlayer(EffectSo.EffectsStruct effectStruct,EffectHandler playerTouchByEffect)
     {
@@ -44,9 +46,14 @@ public class EffectDispatcher : MonoBehaviour
 
     public void ReadEffectHistory()
     {
-        for (int i = 0; i < effectHistory.Length; i++)
+        for (int i = 0; i <= effectHistory.Count-1; i++)
         {
             Debug.Log(effectHistory[i]);
         }
+    }
+
+    public List<string> GetEffectHistory()
+    {
+        return effectHistory;
     }
 }

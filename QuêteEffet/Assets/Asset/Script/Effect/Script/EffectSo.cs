@@ -1,7 +1,3 @@
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EffectSo", menuName = "Scriptable Objects/EffectSo")]
@@ -9,13 +5,15 @@ using UnityEngine;
 public class EffectSo : ScriptableObject
 {
     public string EffectName;
-    public int damage = 0;
-    public float damageDuration = 0;
-    public float delayBeforeEffectReactivation = 0;
-    public float slowModifier = 0;
-    public float slowModifierDuration = 0;
-    public float jumpModifier = 0;
-    public float jumpModifierDuration = 0;
+    public int damage ;
+    public float damageDuration;
+    public float delayBeforeEffectReactivation;
+    public float slowModifier;
+    public float slowModifierDuration;
+    public float jumpModifier;
+    public float jumpModifierDuration;
+    public bool stun = false;
+    public float stunDuration;
 
     public struct EffectsStruct
     {
@@ -27,34 +25,29 @@ public class EffectSo : ScriptableObject
         public float slowModifierDuration;
         public float jumpModifier;
         public float jumpModifierDuration;
+        public bool Stun;
+        public float StunDuration;
     }
 
     EffectsStruct effectsStruct = new EffectsStruct();
 
 
-    private void OnValidate()
-    {
-        SetData();
-    }
-    private void Awake()
-    {
-        SetData();
-    }
-
-    private void SetData()
-    {
-        effectsStruct.EffectName = EffectName;
-        effectsStruct.damage = damage;
-        effectsStruct.damageDuration = damageDuration;
-        effectsStruct.delayBeforeEffectReactivation = delayBeforeEffectReactivation;
-        effectsStruct.slowModifier = slowModifier;
-        effectsStruct.slowModifierDuration = slowModifierDuration;
-        effectsStruct.jumpModifier = jumpModifier;
-        effectsStruct.jumpModifierDuration = jumpModifierDuration;
-    }
-
     public EffectsStruct GetEffectData()
     {
         return effectsStruct;
+    }
+
+    public void SetStruct(EffectSo value)
+    {
+        effectsStruct.EffectName = value.EffectName;
+        effectsStruct.damage = value.damage;
+        effectsStruct.damageDuration = value.damageDuration;
+        effectsStruct.delayBeforeEffectReactivation = value.delayBeforeEffectReactivation;
+        effectsStruct.slowModifier = value.slowModifier;
+        effectsStruct.slowModifierDuration = value.slowModifierDuration;
+        effectsStruct.jumpModifier = value.jumpModifier;
+        effectsStruct.jumpModifierDuration = value.jumpModifierDuration;
+        effectsStruct.Stun = value.stun;
+        effectsStruct.StunDuration = value.stunDuration;
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +17,8 @@ public class Ui : MonoBehaviour
     private GameObject createEffect;
     [SerializeField]
     private GameObject playerUi;
+    [SerializeField]
+    private GameObject applyEffectUi;
 
     public TMP_InputField effectName;
     public TMP_InputField damage;
@@ -27,10 +28,15 @@ public class Ui : MonoBehaviour
     public TMP_InputField slowModifierDuration;
     public TMP_InputField jumpModifier;
     public TMP_InputField jumpModifierDuration;
+    public Toggle stun;
+    public TMP_InputField stunDuration;
     List<TMP_InputField> listOfText;
 
     public TMP_Dropdown playerSelectionDropdown;
     public List<GameObject> playerList;
+
+    public TextMeshProUGUI effectHistory;
+    List<string> history;
 
     [ContextMenu("test button")]
     public void SetButton()
@@ -44,7 +50,7 @@ public class Ui : MonoBehaviour
             {
                GameObject newButton = DefaultControls.CreateButton(new DefaultControls.Resources());
                 newButton.transform.SetParent(buttonHolder.transform);
-                newButton.GetComponentInChildren <Text>().text = listOfEffect[i].name;
+                newButton.GetComponentInChildren <Text>().text = listOfEffect[i].EffectName;
                 newButton.name = listOfEffect[i].name;
                 newButton.GetComponent<Button>().onClick.AddListener(EffectButtonClick);
                 effectButton.Add(newButton);
@@ -56,6 +62,7 @@ public class Ui : MonoBehaviour
     {
         effectButton = new();
         listOfText = new();
+        history = new();
         SetTextList();
     }
 
@@ -64,7 +71,6 @@ public class Ui : MonoBehaviour
     {
         for(int i = 0;i <=effectButton.Count-1;i++)
         {
-            Debug.Log("enter");
             GameObject ButtonObject = effectButton[i];
             effectButton.Remove(effectButton[i]);
             Destroy(ButtonObject);
@@ -75,6 +81,10 @@ public class Ui : MonoBehaviour
     private void UseEffect(int buttonNumber)
     {
         EffectDispatcher.instance.SetEffect(listOfEffect[buttonNumber].GetEffectData(), this.gameObject, playerList[playerSelectionDropdown.value]);
+        DestroyButton();
+        applyEffectUi.SetActive(false);
+        playerUi.SetActive(true);
+        
     }
 
     public void EffectButtonClick()
@@ -103,6 +113,9 @@ public class Ui : MonoBehaviour
             newEffect.slowModifierDuration = Convert.ToInt32(slowModifierDuration.text);
             newEffect.jumpModifier = Convert.ToInt32(jumpModifier.text);
             newEffect.jumpModifierDuration = Convert.ToInt32(jumpModifierDuration.text);
+            newEffect.stun = stun.isOn;
+            newEffect.stunDuration = Convert.ToInt32(stunDuration.text);
+            newEffect.SetStruct(newEffect);
             listOfEffect.Add(newEffect);
             playerUi.SetActive(true);
             createEffect.SetActive(false);
@@ -113,7 +126,6 @@ public class Ui : MonoBehaviour
     }
     private bool TestIfInputFieldEmpty()
     {
-        Debug.Log(listOfText.Count);
         for (int i = 0; i <= listOfText.Count -1; i++)
         {
             if (listOfText[i].text == string.Empty)
@@ -131,6 +143,7 @@ public class Ui : MonoBehaviour
         listOfText.Add(slowModifierDuration);
         listOfText.Add(jumpModifier);
         listOfText.Add(jumpModifierDuration);
+        listOfText.Add(stunDuration);
     }
 
     private void ResetTextValue()
@@ -139,5 +152,20 @@ public class Ui : MonoBehaviour
         {
             listOfText[i].text = string.Empty;
         }
+    }
+
+    public void SetEffectHistory()
+    {
+        ClearHistory();
+        history = EffectDispatcher.instance.GetEffectHistory();
+        for(int i = 0;i <= history.Count - 1; i++)
+        {
+            effectHistory.text += history[i] + Environment.NewLine;
+        }
+    }
+
+    public void ClearHistory()
+    {
+        effectHistory.text = string.Empty;
     }
 }

@@ -18,9 +18,12 @@ public class EffectHandler : MonoBehaviour
         public float jumpModifierDuration;
         public bool jumpModifierRemove;
         public float effectDuration;
+        public bool stun;
+        public float stunDuration;
+        public bool stunRemove;
         public float startTime;
     }
-
+    private int numberOfStun = 0;
     private float targetTimeSecond = 1;
     private float targetTimeMillisecond = 1;
     private int seconde = 0;
@@ -51,16 +54,12 @@ public class EffectHandler : MonoBehaviour
         savedStruct effectData = SetSavedStruct(effectStruct);
         ownerStat.SetSpeedModifier(effectData.slowModifier);
         ownerStat.SetJumpModifier(effectData.jumpModifier);
-        effectList.Add(effectData);
-        Debug.Log(effectData.startTime);
-    }
-    [ContextMenu("Look into List")]
-    private void LookInList()
-    {
-        for (int i = 0; i < effectList.Count; i++)
+        if(effectData.stun == true)
         {
-            Debug.Log(effectList[i].EffectName);
+            ownerStat.LockMovement();
+            numberOfStun++;
         }
+        effectList.Add(effectData);
     }
     private void DeleteFromList(int index)
     {
@@ -88,7 +87,10 @@ public class EffectHandler : MonoBehaviour
         effectData.jumpModifier = effectStruct.jumpModifier;
         effectData.jumpModifierDuration = effectStruct.jumpModifierDuration;
         effectData.jumpModifierRemove = false;
-        effectData.effectDuration = Mathf.Max(effectStruct.damageDuration,effectStruct.jumpModifierDuration,effectStruct.slowModifierDuration);
+        effectData.effectDuration = Mathf.Max(effectStruct.damageDuration,effectStruct.jumpModifierDuration,effectStruct.slowModifierDuration,effectStruct.StunDuration);
+        effectData.stun = effectStruct.Stun;
+        effectData.stunDuration = effectStruct.StunDuration;
+        effectData.stunRemove = false;
         effectData.startTime = milliseconds;
         return effectData;
     }        
@@ -100,11 +102,24 @@ public class EffectHandler : MonoBehaviour
             savedStruct copyStruct = effectList[i];
             copyStruct.effectDuration -= 1;
             copyStruct.damageDuration -= 1;
+            copyStruct.delayBeforeEffectReactivation -= 1;
             copyStruct.slowModifierDuration -= 1;
             copyStruct.jumpModifierDuration -= 1;
+            copyStruct.stunDuration -= 1;
             effectList[i] = copyStruct;
+            Debug.Log(effectList[i].effectDuration);
             if (effectList[i].effectDuration <= 0)
             {
+                if (effectList[i].slowModifierRemove == false)
+                    ownerStat.SetSpeedModifier(-effectList[i].slowModifier);
+                if (effectList[i].jumpModifierRemove == false)
+                    ownerStat.SetSpeedModifier(-effectList[i].jumpModifier);
+                if (effectList[i].stunRemove == false)
+                {
+                    numberOfStun--;
+                    if(numberOfStun <= 0)
+                        ownerStat.UnLockMovement();
+                }
                 DeleteFromList(i);
                 i =-  1;
             }
@@ -136,6 +151,14 @@ public class EffectHandler : MonoBehaviour
                     copyStruct.slowModifierRemove = true;
                     effectList[i] = copyStruct;
                     ownerStat.SetSpeedModifier(effectList[i].slowModifier *- 1);
+                }
+                if (effectList[i].stunDuration <= 0 && effectList[i].stunRemove == false)
+                {
+                    copyStruct.stunRemove = true;
+                    effectList[i] = copyStruct;
+                    numberOfStun--;
+                    if (numberOfStun <= 0)
+                        ownerStat.UnLockMovement();
                 }
             }
         }

@@ -113,7 +113,7 @@ public class EffectHandler : MonoBehaviour
                 if (effectList[i].slowModifierRemove == false)
                     ownerStat.SetSpeedModifier(-effectList[i].slowModifier);
                 if (effectList[i].jumpModifierRemove == false)
-                    ownerStat.SetSpeedModifier(-effectList[i].jumpModifier);
+                    ownerStat.SetJumpModifier(-effectList[i].jumpModifier);
                 if (effectList[i].stunRemove == false)
                 {
                     numberOfStun--;
